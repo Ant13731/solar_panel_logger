@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.2/socket.io.js'></script>
+    <script type="text/javascript">
+        console.log('hello world!');
+        //  const socket = io.connect('wss://biot.bdata.ca:7777',{
+        const socket = io.connect('https://biot.bdata.ca:8001', {
+
+            query: { token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJkYXRhLTg5YTUiLCJpYXQiOjE2MDgwNTI4NjV9._Kp8fT_w0yyKsjmbDtK6WnVM-803dBxG-GBdttAobsI" },
+            rejectUnauthorized: false
+        })
+
+
+
+        socket.on('connection', () => {
+            console.log("I am connecting")
+        })
+
+        socket.on('welcome', function (data) {
+            console.log(data)
+        })
+        socket.on("connect_error", (data) => {
+            console.log(data)
+        })
+        socket.on("biotdatacc-hwwtp-pushdata-102617biot", (data) => {
+            console.log(data)
+        }) 
+    </script>
+</head>
+
+<body>
+    <ul id='messages'></ul>
+    <p>bdata rocks!</p>
+</body>
+
+</html>
