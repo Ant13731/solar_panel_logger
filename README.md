@@ -12,6 +12,11 @@ Then, connect the Arduino to a computer (may be a Raspberry PI). You will need t
 
 On your computer, run the `solar_panel_reader.py` file and it should start reading the output from the Arduino. You may need to change some of the socketio configuration values or the `arduino_port` discussed above.
 
+#### Connecting the Solar Panel to the Arduino
+The solar panel must first connect to the voltage sensor using the provided orange and white wires. The order in which the wires connect matters, so just try both ways until you receive a value in the program.
+
+The negative output of the voltage sensor goes in the GND port of the arduino, and the `S` output of the voltage sensor goes in the `A1` port of the arduino.
+
 ### Output
 The local log is stored in `voltage_log.csv` and has the form:
 

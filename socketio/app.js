@@ -8,49 +8,22 @@ app.use(middlewares)
 const io = require("socket.io")(server, cors.config)
 
 io.on("connection", function (socket) {
-
   socket.on("connect_error", function () {
     console.log(socket.handshake.time + " failed to connect to socket: " + socket.id)
   })
-  socket.emit('welcome', 'INFO: Connected to the socketio')
+  socket.emit('connect', 'Connected to socketio server')
   console.log(socket.handshake.time + " connected to new socket: " + socket.id)
-  socket.on('analytics', data => {
-    console.log("========= Typeof Data: ", typeof data)
-    console.log("==================================")
-    console.log(data)
-    console.log("===================================")
 
+  socket.on('voltage', data => {
     try {
       if (typeof data === 'object') {
-        //''' check if rust object is getting properly read by the server here'''
+        // Receive voltage data
         const parsed = JSON.stringify(data)
         const jsonObjectParsed = JSON.parse(parsed)
-        console.log('================== Parsed Object ==============')
+        console.log('============== Parsed Object ==============')
         console.log(parsed)
         console.log(jsonObjectParsed)
-        console.log("===============================================")
-      }
-    } catch (err) {
-      console.log("========= Error ===============")
-      console.log(err)
-      console.log("===============================")
-    }
-  })
-  socket.on('ACTIONS', data => {
-    console.log("========= Typeof Data: ", typeof data)
-    console.log("==================================")
-    console.log(data)
-    console.log("===================================")
-
-    try {
-      if (typeof data === 'object') {
-        //''' check if rust object is getting properly read by the server here'''
-        const parsed = JSON.stringify(data)
-        const jsonObjectParsed = JSON.parse(parsed)
-        console.log('================== Parsed Object ==============')
-        console.log(parsed)
-        console.log(jsonObjectParsed)
-        console.log("===============================================")
+        console.log("===========================================")
       }
     } catch (err) {
       console.log("========= Error ===============")

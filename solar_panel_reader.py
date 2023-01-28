@@ -5,6 +5,8 @@ import datetime
 import serial
 import socketio
 
+# Just in case something isn't working as expected
+debug = True
 # Determines whether we record solar panel voltage locally.
 # Can be started/stopped remotely via the socketio
 # "Pause Local Data" and "Start Local Data" events. 
@@ -32,7 +34,7 @@ socketio_port = "9000"
 sio = socketio.Client(ssl_verify=False)
 @sio.event
 def connect():
-    print("Connected")
+    print("Connected to socketio server")
 
 @sio.event
 def connect_error(data):
@@ -102,9 +104,6 @@ def start_socketio_data(data):
 # In a loop, run_voltage_reader collects voltage information from the `arduino` (by reading its standard output),
 # then emits a "voltage" event via the `sio` client and records the same data locally through the `file`.
 def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.TextIOWrapper):
-    # testing
-    timesNotSent = 0
-    # testing
     while run_reader:
         # This value will become the digital representation of voltage
         # as an integer from 0 to 1023 (10 bit resolution),
@@ -114,10 +113,6 @@ def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.Te
         value = re.findall(r'\d+', value)
         # Only send if we have a value. We dont want to read in non-numeric entries from the arduino.
         if value != []:
-            # testing
-            #value seems to be lower by a factor of 5 (according to voltmeter)
-            # testing
-            #
             # Need to scale value by the highest readable voltage (5 volts on arduino)
             # divided by the digital resolution of the signal
             # (1024 possible numbers can be read by the arduino's analog input, where 1023 is equivalent to 5 volts)
@@ -127,17 +122,19 @@ def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.Te
                 sio.emit("voltage", {"voltage": voltage, "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S")})
             if run_local_data:
                 file.write(timestamp.strftime("%Y-%m-%d %H:%M:%S") + ", " + str(voltage) + "\n")
-        else:
-            # testing
-            timesNotSent+=1
-            # testing
+            if debug:
+                print("Time:", timestamp.strftime("%Y-%m-%d %H:%M:%S") + ", " + str(voltage), "- Received voltage:", voltage)
     file.close()
 
 if __name__ == "__main__":
     # The baudrate must be the same as the argument for Serial.begin() in solar_panel_logger.ino.
     arduino = serial.Serial(port=arduino_port, baudrate=9600, timeout=.1)
+    if debug:
+        print("Connected to arduino.")
     sio.connect(socketio_server + ":" + socketio_port, auth = {}, wait_timeout=10)
     sio.emit("test", {"foo":"bar"})
+    if debug:
+        print("Sent test event.")
 
     if append_local_data_to_existing:
         file = open("voltage_log.csv", "a")
