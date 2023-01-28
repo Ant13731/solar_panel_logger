@@ -20,15 +20,15 @@ io.on("connection", function (socket) {
         // Receive voltage data
         const parsed = JSON.stringify(data)
         const jsonObjectParsed = JSON.parse(parsed)
-        console.log('============== Parsed Object ==============')
+        console.log('============== Solar Panel Status ==============')
         console.log(parsed)
         console.log(jsonObjectParsed)
-        console.log("===========================================")
+        console.log("================================================")
       }
     } catch (err) {
-      console.log("========= Error ===============")
+      console.log("==================== Error =====================")
       console.log(err)
-      console.log("===============================")
+      console.log("================================================")
     }
   })
   socket.on('disconnect', (reason) => {
