@@ -5,7 +5,7 @@ import datetime
 import serial
 import socketio
 
-# Just in case something isn't working as expected
+# Just in case something isn't working as expected.
 debug = True
 # Determines whether we record solar panel voltage locally.
 # Can be started/stopped remotely via the socketio
@@ -24,17 +24,18 @@ run_reader = True
 append_local_data_to_existing = False
 
 # Which port on your computer the arduino is connected to.
-arduino_port = '/dev/cu.usbmodem14201'
+# See https://support.arduino.cc/hc/en-us/articles/4406856349970-Select-board-and-port-in-Arduino-IDE
+# for more information on where to find the arduino's connected port.
 arduino_port = 'COM3'
 
-# socketio_server = "http://localhost:5000"
+# Socketio setup
 socketio_server = "http://127.0.0.1"
 socketio_port = "9000"
 
 sio = socketio.Client(ssl_verify=False)
-# @sio.event
-# def connect():
-#     print("Connected to socketio server")
+@sio.event
+def connect():
+    print("Connected to socketio server")
 
 @sio.event
 def connect_error(data):
@@ -122,7 +123,6 @@ def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.Te
             # (This may need to change depending on what solar panel you use)
             voltage *= 5
 
-            print(voltage)
             if run_socketio_data:
                 sio.emit("voltage", {"voltage": voltage, "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S")})
             if run_local_data:
@@ -134,6 +134,8 @@ def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.Te
 if __name__ == "__main__":
     # The baudrate must be the same as the argument for Serial.begin() in solar_panel_logger.ino.
     arduino = serial.Serial(port=arduino_port, baudrate=9600, timeout=.1)
+    # If the program does not get past this point with an exception from the `serial` package,
+    # check the value of arduino_port.
     if debug:
         print("Connected to arduino.")
     sio.connect(socketio_server + ":" + socketio_port, auth = {}, wait_timeout=10)

@@ -12,10 +12,20 @@ Then, connect the Arduino to a computer (may be a Raspberry PI). You will need t
 
 On your computer, run the `solar_panel_reader.py` file and it should start reading the output from the Arduino. You may need to change some of the socketio configuration values or the `arduino_port` discussed above.
 
+Once the above preparations are complete, the general order of running the solar panel logger are as follows:
+1. Sort out the hardware. Connect the arduino, voltage reader, solar panel, and any other necessary components.
+2. Run `solar_panel_logger.ino` (on the Arduino, using the Arduino IDE).
+3. Start the socketio server.
+4. Run `solar_panel_reader.py` on your computer.
+
+
 #### Connecting the Solar Panel to the Arduino
 The solar panel must first connect to the voltage sensor using the provided orange and white wires. The order in which the wires connect matters, so just try both ways until you receive a value in the program.
 
 The negative output of the voltage sensor goes in the GND port of the arduino, and the `S` output of the voltage sensor goes in the `A1` port of the arduino.
+
+#### Solar Panel Setup Diagram
+![Solar Panel Setup Diagram](solar_panel_setup_diagram.drawio.svg)
 
 ### Output
 The local log is stored in `voltage_log.csv` and has the form:
@@ -41,3 +51,9 @@ The python script will properly receive the following events:
 | start_local_data | re-starts the recording of local data |
 | pause_socketio_data | pauses socketio client from emitting voltage data |
 | start_socketio_data | starts emitting voltage data from socketio client |
+
+
+### Other Resources
+- Similar project: https://projecthub.arduino.cc/Aboubakr_Elhammoumi/9c72efc8-7307-4b24-b3b0-05247d976518
+- Some documentation for the `analogRead()` function for Arduino: https://www.arduino.cc/reference/en/language/functions/analog-io/analogread/
+- If you wish to read voltage from a more powerful solar panel, you may need to cut the voltage using resistors. These resistors should be placed in the circuit before the voltage reader as needed. This article contains diagrams and an equation to find the necessary ratio between the two resistors: http://www.learningaboutelectronics.com/Articles/How-to-reduce-voltage-with-resistors.php
