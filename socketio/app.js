@@ -11,7 +11,7 @@ io.on("connection", function (socket) {
   socket.on("connect_error", function () {
     console.log(socket.handshake.time + " failed to connect to socket: " + socket.id)
   })
-  socket.emit('connect', 'Connected to socketio server')
+  socket.emit('connect_', 'Connected to socketio server')
   console.log(socket.handshake.time + " connected to new socket: " + socket.id)
 
   socket.on('voltage', data => {

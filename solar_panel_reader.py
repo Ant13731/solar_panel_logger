@@ -32,13 +32,13 @@ socketio_server = "http://127.0.0.1"
 socketio_port = "9000"
 
 sio = socketio.Client(ssl_verify=False)
-@sio.event
-def connect():
-    print("Connected to socketio server")
+# @sio.event
+# def connect():
+#     print("Connected to socketio server")
 
 @sio.event
 def connect_error(data):
-    print("The connection failed!")
+    print("Socketio connection failed")
     global run_reader 
     run_reader = False
     time.sleep(2)
@@ -46,7 +46,7 @@ def connect_error(data):
 
 @sio.event
 def disconnect():
-    print("I'm disconnected!")
+    print("Socketio disconnected")
     global run_reader 
     run_reader = False
     time.sleep(2)
@@ -117,6 +117,11 @@ def run_voltage_reader(arduino: serial.Serial, sio: socketio.Client, file: io.Te
             # divided by the digital resolution of the signal
             # (1024 possible numbers can be read by the arduino's analog input, where 1023 is equivalent to 5 volts)
             voltage = int(value[0]) * 5 / 1023
+            # When testing with my actual solar panel, the reported voltage here
+            # was about 5 times lower than the voltmeter's reading, so scale by 5.
+            # (This may need to change depending on what solar panel you use)
+            voltage *= 5
+
             print(voltage)
             if run_socketio_data:
                 sio.emit("voltage", {"voltage": voltage, "timestamp": timestamp.strftime("%Y-%m-%d %H:%M:%S")})
