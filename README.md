@@ -1,4 +1,4 @@
-# Solar Panel Reader
+# Solar Panel Logger
 Detects the voltage of a solar panel (read through an arduino) and passes that data to a server via socketio events. Also records the same data locally.
 
 ### Usage
